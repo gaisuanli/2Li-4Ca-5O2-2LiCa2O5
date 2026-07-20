@@ -1,0 +1,112 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+spring:
+  application:
+    name: building-safety-api
+  datasource:
+    # Preserve explicit SQL aliases such as "siteId" in JDBC map results while
+    # keeping identifier lookup case-insensitive for MySQL-compatible SQL.
+    url: ${DB_URL:jdbc:h2:file:./runtime/sitesafe;MODE=MySQL;DATABASE_TO_LOWER=FALSE;DATABASE_TO_UPPER=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_SERVER=TRUE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
+
+app:
+  demo-data-enabled: ${DEMO_DATA_ENABLED:true}
+  cors-origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173}
+  token-ttl-minutes: ${TOKEN_TTL_MINUTES:480}
+  tcp:
+    enabled: ${TCP_ENABLED:true}
+    port: ${TCP_PORT:9100}
+  device-offline-monitor:
+    # Disabled by default so the fixed classroom demo snapshot is not marked
+    # offline immediately. Enable it with a live simulator or production feed.
+    enabled: ${DEVICE_OFFLINE_MONITOR_ENABLED:false}
+    timeout-seconds: ${DEVICE_OFFLINE_TIMEOUT_SECONDS:300}
+    scan-interval-ms: ${DEVICE_OFFLINE_SCAN_INTERVAL_MS:30000}
+    initial-delay-ms: ${DEVICE_OFFLINE_INITIAL_DELAY_MS:60000}
+    batch-size: ${DEVICE_OFFLINE_BATCH_SIZE:200}
+  sprinkler:
+    minimum-interval-seconds: ${SPRINKLER_MINIMUM_INTERVAL_SECONDS:300}
+    dispatch-timeout-seconds: ${SPRINKLER_DISPATCH_TIMEOUT_SECONDS:120}
+    timeout-scan-ms: ${SPRINKLER_TIMEOUT_SCAN_MS:30000}
+    timeout-scan-enabled: ${SPRINKLER_TIMEOUT_SCAN_ENABLED:true}
+  ai-agent:
+    mode: ${AI_AGENT_MODE:DEMO}
+    model: ${AI_AGENT_MODEL:demo-site-summary}
+    base-url: ${AI_AGENT_BASE_URL:https://api.openai.com/v1}
+    api-key: ${AI_AGENT_API_KEY:}
+    allowed-base-urls: ${AI_AGENT_ALLOWED_BASE_URLS:https://api.openai.com/v1}
+    user-config-enabled: ${AI_AGENT_USER_CONFIG_ENABLED:true}
+    credential-encryption-key: ${AI_AGENT_CREDENTIAL_ENCRYPTION_KEY:}
+    approved-models: ${AI_AGENT_APPROVED_MODELS:}
+    connect-timeout-ms: ${AI_AGENT_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${AI_AGENT_READ_TIMEOUT_MS:60000}
+    max-content-chars: ${AI_AGENT_MAX_CONTENT_CHARS:8000}
+    max-response-chars: ${AI_AGENT_MAX_RESPONSE_CHARS:16000}
+    max-history-messages: ${AI_AGENT_MAX_HISTORY_MESSAGES:20}
+    conversation-lock-stripes: ${AI_AGENT_CONVERSATION_LOCK_STRIPES:256}
+    conversation-lock-wait-ms: ${AI_AGENT_CONVERSATION_LOCK_WAIT_MS:5000}
+    max-concurrent-requests: ${AI_AGENT_MAX_CONCURRENT_REQUESTS:8}
+    per-user-requests-per-minute: ${AI_AGENT_PER_USER_REQUESTS_PER_MINUTE:20}
+    bulkhead-wait-ms: ${AI_AGENT_BULKHEAD_WAIT_MS:100}
+  push:
+    webhook-enabled: ${PUSH_WEBHOOK_ENABLED:false}
+    allow-http-loopback: ${PUSH_ALLOW_HTTP_LOOPBACK:false}
+    allowed-endpoints: ${PUSH_ALLOWED_ENDPOINTS:}
+    connect-timeout-ms: ${PUSH_CONNECT_TIMEOUT_MS:3000}
+    request-timeout-ms: ${PUSH_REQUEST_TIMEOUT_MS:10000}
+  integrations:
+    video:
+      allowed-hosts: ${VIDEO_ALLOWED_HOSTS:127.0.0.1,localhost}
+      connect-timeout-ms: ${VIDEO_CONNECT_TIMEOUT_MS:3000}
+    vision-ai:
+      enabled: ${VISION_AI_ENABLED:false}
+      base-url: ${VISION_AI_BASE_URL:http://127.0.0.1:5001}
+      api-key: ${VISION_AI_API_KEY:}
+      allowed-base-urls: ${VISION_AI_ALLOWED_BASE_URLS:http://127.0.0.1:5001}
+      allow-http-loopback: ${VISION_AI_ALLOW_HTTP_LOOPBACK:true}
+      connect-timeout-ms: ${VISION_AI_CONNECT_TIMEOUT_MS:3000}
+      request-timeout-ms: ${VISION_AI_REQUEST_TIMEOUT_MS:30000}
+    sprinkler-gateway:
+      mode: ${SPRINKLER_GATEWAY_MODE:DEMO}
+      base-url: ${SPRINKLER_GATEWAY_BASE_URL:}
+      api-key: ${SPRINKLER_GATEWAY_API_KEY:}
+      callback-token: ${SPRINKLER_GATEWAY_CALLBACK_TOKEN:}
+      allowed-base-urls: ${SPRINKLER_GATEWAY_ALLOWED_BASE_URLS:}
+      allow-http-loopback: ${SPRINKLER_GATEWAY_ALLOW_HTTP_LOOPBACK:false}
+      connect-timeout-ms: ${SPRINKLER_GATEWAY_CONNECT_TIMEOUT_MS:3000}
+      request-timeout-ms: ${SPRINKLER_GATEWAY_REQUEST_TIMEOUT_MS:10000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId:-no-trace}] %logger{36} - %msg%n"
+  level:
+    edu.gzhu.sitesafe: INFO

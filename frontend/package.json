@@ -1,0 +1,32 @@
+{
+  "name": "building-safety-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --configLoader runner --host 127.0.0.1",
+    "build": "vite build --configLoader runner",
+    "preview": "vite preview --configLoader runner --host 127.0.0.1",
+    "test": "node --test tests/agent.test.mjs tests/agent-provider.test.mjs tests/api.test.mjs tests/equipment.test.mjs tests/format.test.mjs tests/governance.test.mjs tests/integrations.test.mjs tests/pagination.test.mjs tests/query.test.mjs tests/rule-metrics.test.mjs tests/series.test.mjs tests/session.test.mjs tests/sprinkler.test.mjs tests/tower-model-bindings.test.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report playwright-report",
+    "e2e:install": "playwright install chromium"
+  },
+  "dependencies": {
+    "echarts": "6.1.0",
+    "three": "0.158.0",
+    "vue": "3.5.18",
+    "vue-router": "4.5.1",
+    "vuex": "4.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@vitejs/plugin-vue": "6.0.1",
+    "vite": "7.1.2"
+  }
+}

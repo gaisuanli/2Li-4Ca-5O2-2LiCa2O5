@@ -1,0 +1,3 @@
+# Only required when AI_ENABLE_MODEL=true.
+ultralytics>=8.3,<9
+Pillow>=10,<12

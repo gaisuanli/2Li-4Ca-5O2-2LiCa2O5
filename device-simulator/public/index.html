@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>设备通信模拟器</title>
+  <style>
+    :root{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#101114;background:#f7f7f8}*{box-sizing:border-box}body{margin:0}.shell{max-width:1180px;margin:0 auto;padding:32px}.heading{display:grid;grid-template-columns:1fr auto;align-items:end;border-bottom:1px solid #101114;padding-bottom:18px}.heading span{color:#002fa7;font-size:12px;font-weight:800}.heading h1{font-size:52px;letter-spacing:-.05em;margin:8px 0 0}.heading p{color:#646870;max-width:520px;line-height:1.6}.metrics{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #d8d9dd;margin:22px 0}.metric{background:white;padding:18px;border-right:1px solid #d8d9dd}.metric:last-child{border:0}.metric span{color:#646870;font-size:11px}.metric strong{display:block;font-size:34px;margin-top:22px}.controls,.log{background:white;border:1px solid #d8d9dd;padding:18px;margin-top:22px}.controls{display:flex;flex-wrap:wrap;gap:10px}.button{border:1px solid #101114;background:white;padding:10px 14px;font-weight:700}.primary{background:#002fa7;color:white;border-color:#002fa7}.status{display:inline-flex;align-items:center;border:1px solid;padding:5px 8px;font-size:11px}.on{color:#087f5b;background:#e7f5ef}.off{color:#c01c28;background:#fff0f1}pre{white-space:pre-wrap;word-break:break-all;background:#f7f7f8;border-left:3px solid #002fa7;padding:14px;min-height:160px;font-size:11px;line-height:1.6}@media(max-width:700px){.shell{padding:18px}.heading{grid-template-columns:1fr}.heading h1{font-size:40px}.metrics{grid-template-columns:1fr}.metric{border-right:0;border-bottom:1px solid #d8d9dd}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="heading"><div><span>TCP / JSON / MULTI DEVICE</span><h1>设备通信模拟器</h1></div><p>轮询发送两台塔吊、施工升降机、高支模和深基坑遥测。每条报文使用 4 字节大端长度和 UTF-8 JSON。</p></header>
+    <section class="metrics"><div class="metric"><span>TCP 状态</span><strong id="connection">未连接</strong></div><div class="metric"><span>已发送</span><strong id="sent">0</strong></div><div class="metric"><span>已回执</span><strong id="acked">0</strong></div><div class="metric"><span>下一设备</span><strong id="next">—</strong></div></section>
+    <section class="controls"><button class="button primary" id="connect">连接 TCP</button><button class="button" id="disconnect">断开</button><button class="button" id="send">发送一条</button><button class="button" id="auto">开启自动发送</button><span class="status off" id="status">未连接</span></section>
+    <section class="log"><strong>最近事件</strong><pre id="log">等待操作</pre></section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket=io();let state={};const $=id=>document.getElementById(id);const show=value=>$('log').textContent=JSON.stringify(value,null,2);
+    socket.on('state',next=>{state=next;$('connection').textContent=next.connected?'已连接':'未连接';$('sent').textContent=next.sentCount;$('acked').textContent=next.ackCount;$('next').textContent=next.nextDeviceCode||'—';$('status').textContent=next.connected?`${next.tcpHost}:${next.tcpPort} · ${next.deviceCodes.length} 台设备`:'未连接';$('status').className=`status ${next.connected?'on':'off'}`;$('auto').textContent=next.auto?'停止自动发送':'开启自动发送'});
+    socket.on('telemetry',show);socket.on('ack',show);socket.on('simulator-error',message=>show({error:message}));
+    $('connect').onclick=()=>socket.emit('connect-tcp');$('disconnect').onclick=()=>socket.emit('disconnect-tcp');$('send').onclick=()=>socket.emit('send-once');$('auto').onclick=()=>socket.emit('set-auto',!state.auto);
+  </script>
+</body>
+</html>
