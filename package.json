@@ -1,0 +1,16 @@
+{
+  "name": "building-safety-platform",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev:web": "pnpm --dir frontend dev",
+    "build:web": "pnpm --dir frontend build",
+    "test:web": "pnpm --dir frontend test",
+    "dev:simulator": "pnpm --dir device-simulator dev",
+    "test:simulator": "pnpm --dir device-simulator test"
+  }
+}

@@ -1,0 +1,9 @@
+packages:
+  - frontend
+  - device-simulator
+
+allowBuilds:
+  esbuild: true
+
+packageImportMethod: copy
+verifyDepsBeforeRun: false
