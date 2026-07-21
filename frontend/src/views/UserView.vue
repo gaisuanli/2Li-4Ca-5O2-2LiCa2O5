@@ -138,7 +138,7 @@ onMounted(load)
   <section>
     <header class="page-heading">
       <div>
-        <div class="folio">11 / 14</div>
+        <div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-users" /></svg></div>
         <h1>用户管理</h1>
         <p>维护平台账号、角色和工地范围。用户停用后无法登录；密码重置不会在页面中回显原密码。</p>
       </div>

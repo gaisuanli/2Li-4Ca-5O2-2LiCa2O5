@@ -175,7 +175,7 @@ watch(() => store.state.latestEvent, event => {
 
 <template>
   <section>
-    <header class="page-heading"><div><div class="folio">05 / 14</div><h1>环境分析</h1><p>对温湿度、颗粒物和噪声进行监测，并通过带设备校验和回执的任务控制喷淋。</p></div><div class="heading-meta"><div><span>统计时点</span><strong>{{ formatDate(summary?.statisticsAt) }}</strong></div><div><span>数据性质</span><strong>{{ summary?.dataLabel || '—' }}</strong></div></div></header>
+    <header class="page-heading"><div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-environment" /></svg></div><h1>环境分析</h1><p>对温湿度、颗粒物和噪声进行监测，并通过带设备校验和回执的任务控制喷淋。</p></div><div class="heading-meta"><div><span>统计时点</span><strong>{{ formatDate(summary?.statisticsAt) }}</strong></div><div><span>数据性质</span><strong>{{ summary?.dataLabel || '—' }}</strong></div></div></header>
     <div v-if="loading" class="loading-bar">正在加载环境监测站</div>
     <PageState v-else-if="error" title="环境数据加载失败" :message="error" action="重试" @action="loadSummary" />
     <PageState v-else-if="!summary?.stations.length" title="暂无环境监测站" message="当前工地没有已配置的环境监测设备。" />

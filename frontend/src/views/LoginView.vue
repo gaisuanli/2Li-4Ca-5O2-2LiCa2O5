@@ -27,7 +27,7 @@ async function submit() {
 <template>
   <main class="login-page">
     <section class="login-intro">
-      <div class="login-folio">01</div>
+      <div class="login-folio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 21V8l6-4 6 4v13M15 11h6v10M7 10h4M7 14h4M7 18h4M18 14h3M18 18h3M2 21h20" /></svg></div>
       <p class="eyebrow">贵州大学实训项目</p>
       <h1>建筑安全<br />智能监控平台</h1>
       <p class="login-lead">汇聚设备、环境、视频与 AI 风险数据，完成从异常识别到处置留痕的监管闭环。</p>

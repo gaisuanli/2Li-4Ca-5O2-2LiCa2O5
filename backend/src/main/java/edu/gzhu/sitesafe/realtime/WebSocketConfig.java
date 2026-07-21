@@ -9,13 +9,22 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     private final RealtimeHub hub;
+    private final TokenHandshakeInterceptor tokenInterceptor;
+    private final EchoProtocolHandshakeHandler handshakeHandler;
 
-    public WebSocketConfig(RealtimeHub hub) {
+    public WebSocketConfig(RealtimeHub hub,
+                           TokenHandshakeInterceptor tokenInterceptor,
+                           EchoProtocolHandshakeHandler handshakeHandler) {
         this.hub = hub;
+        this.tokenInterceptor = tokenInterceptor;
+        this.handshakeHandler = handshakeHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(hub, "/ws/events").setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*");
+        registry.addHandler(hub, "/ws/events")
+                .addInterceptors(tokenInterceptor)
+                .setHandshakeHandler(handshakeHandler)
+                .setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*");
     }
 }

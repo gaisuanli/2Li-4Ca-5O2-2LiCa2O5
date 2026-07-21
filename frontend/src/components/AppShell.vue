@@ -63,6 +63,7 @@ const currentNavItem = computed(() => navSections
   .find(item => item.path === route.path))
 
 const currentPageIndex = computed(() => currentNavItem.value?.index || '00')
+const currentIcon = computed(() => currentNavItem.value?.icon || 'dashboard')
 const currentPageTitle = computed(() => (
   route.matched.at(-1)?.meta.title
   || currentNavItem.value?.label
@@ -224,10 +225,21 @@ async function logout() {
       <header class="topbar">
         <div
           class="page-folio"
-          :aria-label="`第 ${currentPageIndex} 页：${currentPageTitle}`"
+          :aria-label="`${currentPageTitle} 页面图标`"
         >
-          <span class="folio-label">页面</span>
-          <strong class="folio-number">{{ currentPageIndex }}</strong>
+          <svg
+            class="folio-icon-svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="square"
+            stroke-linejoin="miter"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <use :href="`#app-icon-${currentIcon}`" />
+          </svg>
         </div>
 
         <div class="page-identity">

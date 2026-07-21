@@ -32,3 +32,9 @@ test-results/
 playwright-report/
 blob-report/
 coverage/
+
+# 临时调试产物
+ai-service/debug-*.txt
+ai-service/test-*.jpg
+ai-service/test-*.png
+test_agent.py

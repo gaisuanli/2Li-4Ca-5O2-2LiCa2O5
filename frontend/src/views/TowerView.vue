@@ -194,7 +194,7 @@ watch(() => store.state.latestEvent, event => {
 
 <template>
   <section>
-    <header class="page-heading"><div><div class="folio">03 / 14</div><h1>塔吊分析</h1><p>查看塔吊关键指标、阈值趋势和三维模型参数绑定。告警判断在服务端完成。</p></div><label class="field heading-select"><span>本页塔吊设备</span><select v-model="deviceId" :disabled="!devices.length"><option v-for="item in devices" :key="item.id" :value="item.id">{{ item.name }} · {{ item.code }}</option></select></label></header>
+    <header class="page-heading"><div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-tower" /></svg></div><h1>塔吊分析</h1><p>查看塔吊关键指标、阈值趋势和三维模型参数绑定。告警判断在服务端完成。</p></div><label class="field heading-select"><span>本页塔吊设备</span><select v-model="deviceId" :disabled="!devices.length"><option v-for="item in devices" :key="item.id" :value="item.id">{{ item.name }} · {{ item.code }}</option></select></label></header>
     <div v-if="loading" class="loading-bar">正在加载塔吊数据和三维模型</div>
     <PageState v-else-if="error" title="塔吊数据加载失败" :message="error" action="重试" @action="load" />
     <PageState v-else-if="!device" title="暂无塔吊设备" message="当前工地没有可查看的塔吊设备。" />

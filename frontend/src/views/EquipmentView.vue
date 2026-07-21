@@ -202,7 +202,7 @@ watch(() => store.state.latestEvent, event => {
   <section>
     <header class="page-heading">
       <div>
-        <div class="folio">04 / 14</div>
+        <div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-equipment" /></svg></div>
         <h1>大型设备监测</h1>
         <p>查看施工升降机、高支模和深基坑设备的已上报指标。离线设备保留最近一次持久化数据，但不将其标记为实时值。</p>
       </div>

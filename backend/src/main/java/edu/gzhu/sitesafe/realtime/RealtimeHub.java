@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class RealtimeHub extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String token = queryParam(session, "token");
+        String token = extractToken(session);
         Optional<UserSession> user = token == null ? Optional.empty() : sessionService.find(token);
         if (user.isEmpty()) {
             session.close(CloseStatus.POLICY_VIOLATION.withReason("invalid token"));
@@ -47,6 +48,35 @@ public class RealtimeHub extends TextWebSocketHandler {
                 "occurredAt", Instant.now().toString()
         ))));
         sessions.put(session, new ConnectionContext(token));
+    }
+
+    /**
+     * 提取鉴权 Token，优先从 Sec-WebSocket-Protocol 子协议字段读取（安全方案），
+     * 回退到 URL query 参数（兼容旧客户端，但不推荐）。
+     * 子协议格式：bearer.&lt;token&gt;
+     */
+    private String extractToken(WebSocketSession session) {
+        // 1. 优先从握手 attributes 读取（TokenHandshakeInterceptor 存入）
+        Object fromAttr = session.getAttributes().get(TokenHandshakeInterceptor.TOKEN_ATTRIBUTE);
+        if (fromAttr instanceof String token && !token.isEmpty()) {
+            return token;
+        }
+        // 2. 兼容性回退：直接从请求头读取（适配未注册拦截器的场景）
+        if (session.getHandshakeHeaders() != null) {
+            List<String> protocols = session.getHandshakeHeaders().get("Sec-WebSocket-Protocol");
+            if (protocols != null) {
+                for (String protocol : protocols) {
+                    for (String item : protocol.split(",")) {
+                        String trimmed = item.trim();
+                        if (trimmed.startsWith(TokenHandshakeInterceptor.BEARER_PREFIX)) {
+                            return trimmed.substring(TokenHandshakeInterceptor.BEARER_PREFIX.length());
+                        }
+                    }
+                }
+            }
+        }
+        // 3. 最后回退到 query 参数（兼容旧客户端，未来可移除）
+        return queryParam(session, "token");
     }
 
     @Override

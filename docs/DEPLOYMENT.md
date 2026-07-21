@@ -16,7 +16,7 @@
 | Python | 3.11+ | 完整构建中的 AI 安全模式测试，以及可选 AI 适配器；跳过测试且不启动 AI 时可省略 |
 | MySQL | 8.0+ | 可选持久数据库 |
 
-所有命令均从 `platform` 根目录执行。
+所有命令均从项目根目录（`another/`）执行。
 
 若系统执行策略阻止本地 `.ps1`，审阅 `scripts/` 后可在当前 PowerShell 会话执行 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`；该设置只在当前进程有效，不修改计算机或用户级策略。
 

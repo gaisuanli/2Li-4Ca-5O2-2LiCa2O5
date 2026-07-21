@@ -54,7 +54,7 @@ watch(() => store.state.latestEvent, event => { if (event?.type?.startsWith('ala
 <template>
   <section>
     <header class="page-heading">
-      <div><div class="folio">01 / 14</div><h1>综合首页</h1><p>从设备状态、风险趋势和未闭环告警观察当前工地安全态势。所有指标由服务端按工地范围聚合。</p></div>
+      <div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-dashboard" /></svg></div><h1>综合首页</h1><p>从设备状态、风险趋势和未闭环告警观察当前工地安全态势。所有指标由服务端按工地范围聚合。</p></div>
       <div class="heading-meta"><div><span>统计时点</span><strong>{{ data?.summary.statisticsAt ? formatDate(data.summary.statisticsAt) : '—' }}</strong></div><div><span>数据性质</span><strong>{{ data?.summary.dataLabel || '—' }}</strong></div></div>
     </header>
 

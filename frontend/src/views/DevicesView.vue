@@ -94,7 +94,7 @@ watch(() => store.state.siteId, () => { page.value = 1; store.commit('setZone', 
 <template>
   <section>
     <header class="page-heading">
-      <div><div class="folio">02 / 14</div><h1>设备总览</h1><p>区域场景、设备筛选和详情共享同一选择上下文；点击区域后，列表与数量会同步更新。</p></div>
+      <div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-devices" /></svg></div><h1>设备总览</h1><p>区域场景、设备筛选和详情共享同一选择上下文；点击区域后，列表与数量会同步更新。</p></div>
       <div class="heading-meta"><div><span>设备结果</span><strong>{{ total }} 台</strong></div><div><span>选中区域</span><strong>{{ zones.find(z => z.id === store.state.selectedZoneId)?.name || '全部区域' }}</strong></div></div>
     </header>
 

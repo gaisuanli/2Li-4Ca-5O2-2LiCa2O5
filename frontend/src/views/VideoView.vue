@@ -60,7 +60,7 @@ watch(() => store.state.siteId, () => {
 
 <template>
   <section>
-    <header class="page-heading"><div><div class="folio">06 / 14</div><h1>视频监控</h1><p>按摄像头通道展示播放配置和在线状态；可播放、未配置与离线状态分别处理。</p></div><div class="heading-meta"><div><span>查询结果</span><strong>{{ total }} 路</strong></div><div><span>播放链路</span><strong>HLS 适配层</strong></div></div></header>
+    <header class="page-heading"><div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-video" /></svg></div><h1>视频监控</h1><p>按摄像头通道展示播放配置和在线状态；可播放、未配置与离线状态分别处理。</p></div><div class="heading-meta"><div><span>查询结果</span><strong>{{ total }} 路</strong></div><div><span>播放链路</span><strong>HLS 适配层</strong></div></div></header>
     <section class="panel video-list-panel">
       <form class="filter-bar" role="search" @submit.prevent="queryCameras">
         <label class="field"><span>关键字</span><input v-model.trim="filters.keyword" type="search" placeholder="通道编号或名称" /></label>

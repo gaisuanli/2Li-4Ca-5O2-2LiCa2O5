@@ -223,7 +223,7 @@ watch(() => store.state.siteId, () => {
 
 <template>
   <section>
-    <header class="page-heading"><div><div class="folio">10 / 14</div><h1>规则配置</h1><p>阈值、适用范围和抑制窗口由服务端保存并执行。类型规则明确绑定当前工地，停用不会删除历史告警。</p></div><button class="button button-primary" type="button" @click="showCreate = !showCreate">{{ showCreate ? '取消新增' : '新增规则' }}</button></header>
+    <header class="page-heading"><div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-rules" /></svg></div><h1>规则配置</h1><p>阈值、适用范围和抑制窗口由服务端保存并执行。类型规则明确绑定当前工地，停用不会删除历史告警。</p></div><button class="button button-primary" type="button" @click="showCreate = !showCreate">{{ showCreate ? '取消新增' : '新增规则' }}</button></header>
 
     <form v-if="showCreate" class="panel rule-form" @submit.prevent="create">
       <div class="panel-header"><div><h2>新增阈值规则</h2><p>指标目录与服务端设备能力保持一致；共享指标必须明确绑定设备</p></div></div>
