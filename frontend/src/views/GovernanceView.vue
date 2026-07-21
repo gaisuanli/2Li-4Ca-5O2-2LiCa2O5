@@ -448,7 +448,7 @@ watch(() => store.state.siteId, () => {
   <section class="governance-page">
     <header class="page-heading governance-heading">
       <div>
-        <div class="folio">13 / 14</div>
+        <div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-governance" /></svg></div>
         <h1>知识与报告治理</h1>
         <p>知识、模板、审核与推送均绑定当前工地，所有变更由服务端保存并写入审计日志。</p>
       </div>

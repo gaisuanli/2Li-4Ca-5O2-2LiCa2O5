@@ -41,16 +41,16 @@ app:
     timeout-scan-ms: ${SPRINKLER_TIMEOUT_SCAN_MS:30000}
     timeout-scan-enabled: ${SPRINKLER_TIMEOUT_SCAN_ENABLED:true}
   ai-agent:
-    mode: ${AI_AGENT_MODE:DEMO}
-    model: ${AI_AGENT_MODEL:demo-site-summary}
-    base-url: ${AI_AGENT_BASE_URL:https://api.openai.com/v1}
+    mode: ${AI_AGENT_MODE:OPENAI_COMPATIBLE}
+    model: ${AI_AGENT_MODEL:deepseek-chat}
+    base-url: ${AI_AGENT_BASE_URL:https://api.deepseek.com/v1}
     api-key: ${AI_AGENT_API_KEY:}
-    allowed-base-urls: ${AI_AGENT_ALLOWED_BASE_URLS:https://api.openai.com/v1}
+    allowed-base-urls: ${AI_AGENT_ALLOWED_BASE_URLS:https://api.deepseek.com/v1,https://api.openai.com/v1}
     user-config-enabled: ${AI_AGENT_USER_CONFIG_ENABLED:true}
     credential-encryption-key: ${AI_AGENT_CREDENTIAL_ENCRYPTION_KEY:}
-    approved-models: ${AI_AGENT_APPROVED_MODELS:}
-    connect-timeout-ms: ${AI_AGENT_CONNECT_TIMEOUT_MS:5000}
-    read-timeout-ms: ${AI_AGENT_READ_TIMEOUT_MS:60000}
+    approved-models: ${AI_AGENT_APPROVED_MODELS:deepseek-chat,deepseek-reasoner}
+    connect-timeout-ms: ${AI_AGENT_CONNECT_TIMEOUT_MS:15000}
+    read-timeout-ms: ${AI_AGENT_READ_TIMEOUT_MS:120000}
     max-content-chars: ${AI_AGENT_MAX_CONTENT_CHARS:8000}
     max-response-chars: ${AI_AGENT_MAX_RESPONSE_CHARS:16000}
     max-history-messages: ${AI_AGENT_MAX_HISTORY_MESSAGES:20}
@@ -70,13 +70,13 @@ app:
       allowed-hosts: ${VIDEO_ALLOWED_HOSTS:127.0.0.1,localhost}
       connect-timeout-ms: ${VIDEO_CONNECT_TIMEOUT_MS:3000}
     vision-ai:
-      enabled: ${VISION_AI_ENABLED:false}
+      enabled: ${VISION_AI_ENABLED:true}
       base-url: ${VISION_AI_BASE_URL:http://127.0.0.1:5001}
       api-key: ${VISION_AI_API_KEY:}
       allowed-base-urls: ${VISION_AI_ALLOWED_BASE_URLS:http://127.0.0.1:5001}
       allow-http-loopback: ${VISION_AI_ALLOW_HTTP_LOOPBACK:true}
-      connect-timeout-ms: ${VISION_AI_CONNECT_TIMEOUT_MS:3000}
-      request-timeout-ms: ${VISION_AI_REQUEST_TIMEOUT_MS:30000}
+      connect-timeout-ms: ${VISION_AI_CONNECT_TIMEOUT_MS:5000}
+      request-timeout-ms: ${VISION_AI_REQUEST_TIMEOUT_MS:60000}
     sprinkler-gateway:
       mode: ${SPRINKLER_GATEWAY_MODE:DEMO}
       base-url: ${SPRINKLER_GATEWAY_BASE_URL:}

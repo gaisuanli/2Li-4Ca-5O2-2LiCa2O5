@@ -317,7 +317,7 @@ watch(() => store.state.siteId, () => {
   <section class="agent-page">
     <header class="agent-page-heading">
       <div>
-        <div class="folio">08 / 14</div>
+        <div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-agent" /></svg></div>
         <h1>AI Agent 问答</h1>
         <p>会话与当前工地绑定。每个账号可选择后端批准的兼容 API；API Key 仅写入服务器密钥存储，页面不会回显。</p>
       </div>

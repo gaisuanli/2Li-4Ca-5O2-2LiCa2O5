@@ -1,3 +1,4 @@
-# Only required when AI_ENABLE_MODEL=true.
+# 通义千问 VL 模式（AI_MODE=qwen_vl）：零依赖，仅使用 Python 标准库
+# 本地 YOLO 模式（AI_MODE=model）：需要以下依赖
 ultralytics>=8.3,<9
 Pillow>=10,<12

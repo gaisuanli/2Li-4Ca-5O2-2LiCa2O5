@@ -98,7 +98,10 @@ export default createStore({
       commit('setRealtimeStatus', 'CONNECTING')
       const protocol = location.protocol === 'https:' ? 'wss' : 'ws'
       const base = import.meta.env.VITE_WS_BASE || `${protocol}://${location.host}`
-      const socket = new WebSocket(`${base}/ws/events?token=${encodeURIComponent(state.token)}`)
+      // 通过 Sec-WebSocket-Protocol 子协议字段传递 Bearer Token，
+      // 避免 token 出现在 URL 查询串（会被 Nginx access.log、浏览器 Referrer 记录）
+      const subprotocol = `bearer.${state.token}`
+      const socket = new WebSocket(`${base}/ws/events`, subprotocol)
       realtimeSocket = socket
       socket.addEventListener('open', () => commit('setRealtimeStatus', 'CONNECTED'))
       socket.addEventListener('message', event => {

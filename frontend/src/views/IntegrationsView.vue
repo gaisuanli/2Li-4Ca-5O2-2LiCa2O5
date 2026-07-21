@@ -369,7 +369,7 @@ watch(() => store.state.siteId, resetForSite)
   <section class="integrations-page">
     <header class="page-heading">
       <div>
-        <div class="folio">14 / 14</div>
+        <div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-integrations" /></svg></div>
         <h1>集成中心</h1>
         <p>集中核对真实视频、视觉 AI、喷淋网关和生产监控。配置状态与主动检查结果分开呈现，未配置的外部系统不会标记为已接入。</p>
       </div>

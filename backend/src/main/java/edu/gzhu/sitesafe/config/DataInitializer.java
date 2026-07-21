@@ -16,12 +16,21 @@ public class DataInitializer implements ApplicationRunner {
     private final JdbcTemplate jdbc;
     private final PasswordEncoder passwordEncoder;
     private final boolean enabled;
+    private final String adminPassword;
+    private final String supervisorPassword;
+    private final String devicePassword;
 
     public DataInitializer(JdbcTemplate jdbc, PasswordEncoder passwordEncoder,
-                           @Value("${app.demo-data-enabled:true}") boolean enabled) {
+                           @Value("${app.demo-data-enabled:true}") boolean enabled,
+                           @Value("${app.demo.admin-password:Admin@123}") String adminPassword,
+                           @Value("${app.demo.supervisor-password:Safe@123}") String supervisorPassword,
+                           @Value("${app.demo.device-password:Device@123}") String devicePassword) {
         this.jdbc = jdbc;
         this.passwordEncoder = passwordEncoder;
         this.enabled = enabled;
+        this.adminPassword = adminPassword;
+        this.supervisorPassword = supervisorPassword;
+        this.devicePassword = devicePassword;
     }
 
     @Override
@@ -36,11 +45,11 @@ public class DataInitializer implements ApplicationRunner {
         }
 
         jdbc.update("insert into app_user(username,password_hash,display_name,role,site_scope,enabled) values(?,?,?,?,?,true)",
-                "admin", passwordEncoder.encode("Admin@123"), "系统管理员", "ADMIN", "1");
+                "admin", passwordEncoder.encode(adminPassword), "系统管理员", "ADMIN", "1");
         jdbc.update("insert into app_user(username,password_hash,display_name,role,site_scope,enabled) values(?,?,?,?,?,true)",
-                "supervisor", passwordEncoder.encode("Safe@123"), "项目监管员", "SUPERVISOR", "1");
+                "supervisor", passwordEncoder.encode(supervisorPassword), "项目监管员", "SUPERVISOR", "1");
         jdbc.update("insert into app_user(username,password_hash,display_name,role,site_scope,enabled) values(?,?,?,?,?,true)",
-                "device", passwordEncoder.encode("Device@123"), "设备管理员", "DEVICE_MANAGER", "1");
+                "device", passwordEncoder.encode(devicePassword), "设备管理员", "DEVICE_MANAGER", "1");
 
         LocalDateTime updated = LocalDateTime.of(2026, 7, 19, 16, 30);
         jdbc.update("insert into site(code,name,address,status,updated_at) values(?,?,?,?,?)",
@@ -99,11 +108,17 @@ public class DataInitializer implements ApplicationRunner {
                 2, 2, "CONFIRM", "PENDING", "PROCESSING", "已通知设备管理员检查现场网关", Timestamp.valueOf(updated.minusMinutes(80)));
 
         jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
-                "CAM-001", "东区塔吊摄像头", 1, 2, true, null, Timestamp.valueOf(updated.minusSeconds(20)));
+                "CAM-001", "东区塔吊摄像头", 1, 2, true, "/videos/tower-crane.mp4", Timestamp.valueOf(updated.minusSeconds(20)));
         jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
-                "CAM-002", "西区基坑摄像头", 1, 4, false, null, Timestamp.valueOf(updated.minusHours(2)));
+                "CAM-002", "西区基坑摄像头", 1, 4, true, "/videos/excavator.mp4", Timestamp.valueOf(updated.minusSeconds(15)));
         jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
-                "CAM-003", "南区通道摄像头", 1, 6, true, null, Timestamp.valueOf(updated.minusSeconds(38)));
+                "CAM-003", "南区通道摄像头", 1, 6, true, "/videos/workers-helmets.mp4", Timestamp.valueOf(updated.minusSeconds(38)));
+        jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
+                "CAM-004", "北区主体摄像头", 1, 1, true, "/videos/building-frames.mp4", Timestamp.valueOf(updated.minusSeconds(10)));
+        jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
+                "CAM-005", "中区主体摄像头", 1, 3, true, "/videos/construction-aerial.mp4", Timestamp.valueOf(updated.minusSeconds(25)));
+        jdbc.update("insert into camera(code,name,site_id,zone_id,online,stream_url,last_frame_at) values(?,?,?,?,?,?,?)",
+                "CAM-006", "工地全景摄像头", 1, 2, true, "/videos/crane-timelapse.mp4", Timestamp.valueOf(updated.minusSeconds(5)));
 
         jdbc.update("insert into ai_risk(camera_id,site_id,zone_id,risk_type,confidence,model_version,occurred_at,evidence_url,status) values(?,?,?,?,?,?,?,?,?)",
                 1, 1, 2, "未佩戴安全帽", 0.9340, "yolo-sitesafe-1.0", Timestamp.valueOf(updated.minusMinutes(42)), null, "PENDING_REVIEW");

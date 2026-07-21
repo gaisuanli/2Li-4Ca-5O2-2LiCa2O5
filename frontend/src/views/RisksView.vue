@@ -43,7 +43,7 @@ watch(selectedId, () => { evidenceFailed.value = false })
 
 <template>
   <section>
-    <header class="page-heading"><div><div class="folio">07 / 14</div><h1>AI 风险</h1><p>AI 识别结果必须经过人工复核；确认有效后才生成告警，模型版本和置信度始终保留。</p></div><label class="field heading-select"><span>复核状态</span><select v-model="status"><option value="">全部状态</option><option value="PENDING_REVIEW">待复核</option><option value="CONFIRMED">已确认</option><option value="FALSE_POSITIVE">误报</option></select></label></header>
+    <header class="page-heading"><div><div class="folio"><svg viewBox="0 0 24 24"><use href="#app-icon-risks" /></svg></div><h1>AI 风险</h1><p>AI 识别结果必须经过人工复核；确认有效后才生成告警，模型版本和置信度始终保留。</p></div><label class="field heading-select"><span>复核状态</span><select v-model="status"><option value="">全部状态</option><option value="PENDING_REVIEW">待复核</option><option value="CONFIRMED">已确认</option><option value="FALSE_POSITIVE">误报</option></select></label></header>
     <div v-if="loading" class="loading-bar">正在加载 AI 风险事件</div>
     <PageState v-else-if="error" title="风险事件加载失败" :message="error" action="重试" @action="load" />
     <div v-else class="risk-layout">

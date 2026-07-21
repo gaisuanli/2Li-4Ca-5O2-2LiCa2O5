@@ -9,17 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -142,13 +138,6 @@ public class AiAgentProvider {
         URI endpoint = compatibleEndpoint(configuration).orElseThrow(() ->
                 new AppException(HttpStatus.SERVICE_UNAVAILABLE, "AI_AGENT_UNAVAILABLE",
                         "AI Agent 服务端配置不可用，请联系管理员"));
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(properties.effectiveConnectTimeoutMs()))
-                .followRedirects(HttpClient.Redirect.NEVER)
-                .build();
-        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
-        requestFactory.setReadTimeout(Duration.ofMillis(properties.effectiveReadTimeoutMs()));
-        RestClient client = RestClient.builder().requestFactory(requestFactory).build();
 
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of(
@@ -166,24 +155,31 @@ public class AiAgentProvider {
         request.put("temperature", 0.2);
 
         try {
-            JsonNode response = client.post()
-                    .uri(endpoint)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.apiKey().trim())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .exchange((httpRequest, httpResponse) -> {
-                        int statusCode = httpResponse.getStatusCode().value();
-                        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-                            // Do not read or retain provider error bodies.
-                            throw new ProviderHttpStatusException(statusCode);
-                        }
-                        int byteLimit = properties.effectiveMaxResponseBytes();
-                        long contentLength = httpResponse.getHeaders().getContentLength();
-                        if (contentLength > byteLimit) throw new ProviderResponseTooLargeException();
-                        byte[] boundedBody = readBounded(httpResponse.getBody(), byteLimit);
-                        return objectMapper.readTree(boundedBody);
-                    });
+            byte[] requestBody = objectMapper.writeValueAsBytes(request);
+            // 使用默认 ProxySelector（受 JVM 的 -Dhttps.proxyHost/-Dhttps.proxyPort 控制），
+            // 通过本机 HTTP 代理访问外部 LLM API；本地连接通过 -Dhttp.nonProxyHosts 绕过。
+            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) endpoint.toURL().openConnection();
+            connection.setRequestMethod("POST");
+            connection.setConnectTimeout(properties.effectiveConnectTimeoutMs());
+            connection.setReadTimeout(properties.effectiveReadTimeoutMs());
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+            connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.apiKey().trim());
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            connection.setRequestProperty(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            connection.setRequestProperty(HttpHeaders.USER_AGENT, "building-safety-ai-agent/1.0");
+            try (java.io.OutputStream os = connection.getOutputStream()) {
+                os.write(requestBody);
+                os.flush();
+            }
+            int statusCode = connection.getResponseCode();
+            if (statusCode < 200 || statusCode >= 300) {
+                log.warn("AI compatible provider returned HTTP status {}", statusCode);
+                throw providerError();
+            }
+            int byteLimit = properties.effectiveMaxResponseBytes();
+            byte[] boundedBody = readBounded(connection.getInputStream(), byteLimit);
+            JsonNode response = objectMapper.readTree(boundedBody);
             JsonNode content = response == null ? null : response.path("choices").path(0).path("message").path("content");
             if (content == null || !content.isTextual() || content.asText().isBlank()
                     || content.asText().length() > properties.effectiveMaxResponseChars()) {
@@ -191,25 +187,11 @@ public class AiAgentProvider {
                 throw providerError();
             }
             return new ProviderReply(content.asText().trim(), status.mode().name(), status.model());
-        } catch (ProviderHttpStatusException ex) {
-            log.warn("AI compatible provider returned HTTP status {}", ex.statusCode());
-            throw providerError();
-        } catch (ProviderResponseTooLargeException ex) {
-            log.warn("AI compatible provider response exceeded the configured byte limit");
-            throw providerError();
-        } catch (ResourceAccessException ex) {
-            if (isTimeout(ex)) {
-                log.warn("AI compatible provider request timed out");
-                throw timeoutError();
-            }
-            log.warn("AI compatible provider could not be reached ({}, causes={})",
-                    ex.getClass().getSimpleName(), causeTypeNames(ex));
-            throw providerError();
         } catch (AppException ex) {
             throw ex;
         } catch (Exception ex) {
             if (isTimeout(ex)) {
-                log.warn("AI compatible provider request timed out");
+                log.warn("AI compatible provider request timed out: {}", ex.getMessage());
                 throw timeoutError();
             }
             log.warn("AI compatible provider response could not be processed ({})", ex.getClass().getSimpleName());

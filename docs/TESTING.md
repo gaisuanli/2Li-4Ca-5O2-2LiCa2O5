@@ -27,7 +27,7 @@
 统一执行：
 
 ```powershell
-Set-Location D:\building-agent\platform
+Set-Location D:\建筑安全智能监控平台\another
 .\scripts\build.ps1
 ```
 
